@@ -1,0 +1,13 @@
+{
+  "name": "hip-chatbot",
+  "description": "A chat bot for cool peeps",
+  "author": "Ridley Larsen <ridley@velocitywebworks.com>",
+  "dependencies": {
+    "request": "2.x.x",
+    "node-xmpp": "0.x.x",
+    "mongojs": ">= 0.13.x",
+    "sys": "0.0.1",
+    "util": ">= 0.10.3"
+  },
+  "engine": "node >= 0.4.1"
+}
