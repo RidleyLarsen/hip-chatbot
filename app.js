@@ -9,9 +9,10 @@ var request = require('request'); // github.com/mikeal/request
 var sys = require('sys');
 var util = require('util');
 var xmpp = require('node-xmpp');
-var local_settings = require('./local-settings');
+var local_settings = require('./local_settings.json');
 
 // Config (get details from https://www.hipchat.com/account/xmpp)
+
 var jid = local_settings.jid;
 var password = local_settings.password;
 var room_jids = local_settings.room_jids;
@@ -22,6 +23,7 @@ var cl = new xmpp.Client({
   password: password
 });
 
+util.inspect(cl);
 
 /// functions
 
@@ -51,8 +53,8 @@ function getWordWithoutScoreAt(str, pos) {
 var databaseUrl = "mydb"; // "username:password@example.com/mydb"
 var collections = ["objects"];
 var db = require("mongojs").connect(databaseUrl, collections);
-
-
+util.log(db, collections, databaseUrl)
+util.inspect(collections)
 // Once connected, set available presence and join room
 cl.on('online', function() {
   util.log("We're online!");
@@ -64,7 +66,7 @@ cl.on('online', function() {
 
   // join room (and request no chat history)
   for (var i = room_jids.length - 1; i >= 0; i--) {
-     cl.send(new xmpp.Element('presence', { to: local.room_jids[i] + '/' + local.room_nick }).
+     cl.send(new xmpp.Element('presence', { to: room_jids[i] + '/' + room_nick }).
        c('x', { xmlns: 'http://jabber.org/protocol/muc' }));
   };
 
