@@ -26,7 +26,7 @@ function getWordAt(str, pos) {
 
 function getWordWithoutScoreAt(str, pos) {
   result = getWordAt(str, pos);
-  return result.slice(0, result.length - 2);
+  return result.replace(/\+\+|\-\-/g, "").toLowerCase();
 }
 
 // <object>++
