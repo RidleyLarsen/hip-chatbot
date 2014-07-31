@@ -135,7 +135,7 @@ function score_handle_minus(cl, message, from, room_to) {
 function score_query(cl, message, from, room_to) {
   if (message.indexOf('@score') === 0) {
     name = getWordAt(message, 7);
-    db.objects.find({'name': {$regex: 'all', $options: 'i'}}, function(err, objects) {
+    db.objects.find({'name': {$regex: 'all', $options: 'i'}, {}, {limit: 5}}, function(err, objects) {
       if (err) {
         console.log(err);
       }
