@@ -26,13 +26,26 @@ function getWordAt(str, pos) {
 
 function getWordWithoutScoreAt(str, pos) {
   result = getWordAt(str, pos);
+
+  // If the message is something like this:
+  //
+  // ToiletPi is up (Ridley++), everybody go check it out!
+  //
+  // ...we want the name to end up as "ridley" and not "(ridley)".
+
+  parens = result.match(/\([^\s]+[+-]{2}\)/);
+
+  if (parens) {
+    result = parens[0].slice(1, -1);
+  }
+
   return result.replace(/\+\+|\-\-/g, "").toLowerCase();
 }
 
 // <object>++
 // ex: (chompy)++
 function score_handle_plus(cl, message, from, room_to) {
-  plus_plus_pos = message.indexOf('++');
+  plus_plus_pos = message.search(/[^\s]\+\+/);
   // find plus plusses
   if (plus_plus_pos > 0) {
     console.log('this message has a ++ in it.');
@@ -83,7 +96,7 @@ function score_handle_plus(cl, message, from, room_to) {
 // <object>--
 // ex: creepy_bunny--
 function score_handle_minus(cl, message, from, room_to) {
-  minus_minus_pos = message.indexOf('--');
+  minus_minus_pos = message.search(/[^\s]--/);
   if (minus_minus_pos > 0) {
     console.log('this message has a -- in it.');
     name = getWordWithoutScoreAt(message, minus_minus_pos);
