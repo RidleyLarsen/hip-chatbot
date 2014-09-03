@@ -1,9 +1,6 @@
-// Basic XMPP bot example for HipChat using node.js
-// To use:
-//  1. Set config variables
-//  2. Run `node hipchat_bot.js`
-//  3. Send a message like "!weather 94085" in the room with the bot
-var _version = '0.2';
+// Basic XMPP bot for HipChat using node.js
+
+var _version = '0.3';
 
 var sys = require('sys');
 var util = require('util');
@@ -17,6 +14,7 @@ var message_functions = [];
 // Chat Modules
 var score = require('./score_tracker.js');
 var weather = require('./weather.js');
+var toilet = require('./toilet.js');
 
 // Config (get details from https://www.hipchat.com/account/xmpp)
 var jid = local_settings.jid;
@@ -36,6 +34,7 @@ util.inspect(cl);
 function handle_group_message(cl, message, from, room_to) {
   score.handle_group_message(cl, message, from, room_to);
   weather.handle_group_message(cl, message, from, room_to);
+  toilet.handle_group_message(cl, message, from, room_to);
 }
 
 
