@@ -17,8 +17,8 @@ function toilet_query(cl, message, from, room_to) {
 
             if (!error && response.statusCode === 200) {
                 chars = {
-                    false: String.fromCharCode(0x2713), // Check mark
-                    true: String.fromCharCode(0xD83D,0xDEAB),
+                    false: "(successful)", // Unicode: "Check mark" String.fromCharCode(0x2713),
+                    true: "(failed)" // Unicode: "No Entry" String.fromCharCode(0xD83D,0xDEAB),
                 };
                 util.log(body.mens_occupied); // Print the json response
                 util.log(body.womens_occupied);

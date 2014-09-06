@@ -70,10 +70,10 @@ cl.on('online', function() {
 });
 
 cl.on('stanza', function(stanza) {
-  // always log error stanzas
+  // don't log error stanzas
   var from = stanza.attrs.from;
   if (stanza.attrs.type == 'error') {
-    util.log('[error] ' + stanza);
+    //util.log('[error] ' + stanza);
     return;
   }
 
