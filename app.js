@@ -1,6 +1,6 @@
 // Basic XMPP bot for HipChat using node.js
 
-var _version = '0.3';
+var _version = '0.3.1';
 
 var sys = require('sys');
 var util = require('util');
