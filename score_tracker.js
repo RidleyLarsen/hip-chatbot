@@ -12,6 +12,20 @@ var db = require("mongojs").connect(databaseUrl, collections);
 util.log(db, collections, databaseUrl);
 util.inspect(collections);
 
+function send_message(text, cl, from, to) { // add 'cl' param
+    var type;
+    if (from.indexOf("chat.hipchat.com") > 0) {
+      type = 'chat';
+      to = from;
+    }
+    else if (from.indexOf('conf.hipchat.com') > 0) {
+      type = 'groupchat';
+    }
+    cl.send(new xmpp.Element('message', { to: to, type: type }).
+      c('body').t(text)
+    );
+}
+
 function getWordAt(str, pos) {
     str = String(str);
     pos = Number(pos) >>> 0;
@@ -45,12 +59,12 @@ function getWordWithoutScoreAt(str, pos) {
 // <object>++
 // ex: (chompy)++
 function score_handle_plus(cl, message, from, room_to) {
+  if (from.indexOf('chat.hipchat.com') > 0) {
+    return; // No score cheating!
+  }
   plus_plus_pos = message.search(/[^\s]\+\+/);
-  // find plus plusses
   if (plus_plus_pos > 0) {
-    //console.log('this message has a ++ in it.');
     name = getWordWithoutScoreAt(message, plus_plus_pos);
-    //console.log('name:', name);
     db.objects.find({'name': name}, function(err, objects) {
       if (err) {
         console.log(err);
@@ -61,22 +75,16 @@ function score_handle_plus(cl, message, from, room_to) {
         'reason': message,
         'date': new Date(),
       };
-      // console.log('reason obj', reason_obj);
-      // console.log('objects', objects);
       if(objects.length === 0){
-        //console.log('[Awesome] no objects found. creating one.');
         obj = {
           'name': name,
           'score': 1,
           'reasons': [reason_obj],
         };
         db.objects.save(obj);
-        cl.send(new xmpp.Element('message', { to: room_to, type: 'groupchat' }).
-          c('body').t('[Awesome! new item! ' + name + ' now at ' + obj.score + '!]')
-        );
+        send_message('[Awesome! new item! ' + name + ' now at ' + obj.score + '!]', cl, from, room_to);
       }
       else objects.forEach(function(obj) {
-        //console.log('object found:', obj);
         obj.score++;
         if (obj.reasons) {
             obj.reasons.push(reason_obj);
@@ -85,9 +93,7 @@ function score_handle_plus(cl, message, from, room_to) {
             obj.reasons = [reason_obj];
         }
         db.objects.update({'name': name}, {$set: {'score': obj.score, reasons: obj.reasons}});
-        cl.send(new xmpp.Element('message', { to: room_to, type: 'groupchat' }).
-          c('body').t('[Awesome! ' + name + ' now at ' + obj.score + '!]')
-        );
+        send_message('[Awesome! ' + name + ' now at ' + obj.score + '!]', cl, from, room_to);
       });
     });
   }
@@ -96,11 +102,12 @@ function score_handle_plus(cl, message, from, room_to) {
 // <object>--
 // ex: creepy_bunny--
 function score_handle_minus(cl, message, from, room_to) {
+  if (from.indexOf('chat.hipchat.com') > 0) {
+    return; // No score cheating!
+  }
   minus_minus_pos = message.search(/[^\s]--/);
   if (minus_minus_pos > 0) {
-    //console.log('this message has a -- in it.');
     name = getWordWithoutScoreAt(message, minus_minus_pos);
-    //console.log('name:', name);
     db.objects.find({'name': name}, function(err, objects) {
       if (err) {
         console.log(err);
@@ -111,22 +118,16 @@ function score_handle_minus(cl, message, from, room_to) {
         'reason': message,
         'date': new Date(),
       };
-      //console.log('reason obj', reason_obj);
-      //console.log('objects', objects);
       if(objects.length === 0){
-        //console.log('[woot] no objects found. creating one.');
         obj = {
           'name': name,
           'score': -1,
           'reasons': [reason_obj],
         };
         db.objects.save(obj);
-        cl.send(new xmpp.Element('message', { to: room_to, type: 'groupchat' }).
-          c('body').t('[ouch! bad start! ' + name + ' now at ' + obj.score + '!]')
-        );
+        send_message('[ouch! bad start! ' + name + ' now at ' + obj.score + '!]', cl, from, room_to);
       }
       else objects.forEach(function(obj) {
-        //console.log('object found:', obj);
         obj.score--;
         if (obj.reasons) {
             obj.reasons.push(reason_obj);
@@ -135,9 +136,7 @@ function score_handle_minus(cl, message, from, room_to) {
             obj.reasons = [reason_obj];
         }
         db.objects.update({'name': name}, {$set: {'score': obj.score, reasons: obj.reasons}});
-        cl.send(new xmpp.Element('message', { to: room_to, type: 'groupchat' }).
-          c('body').t('[ouch! ' + name + ' now at ' + obj.score + '!]')
-        );
+        send_message('[ouch! ' + name + ' now at ' + obj.score + '!]', cl, from, room_to);
       });
     });
   }
@@ -153,14 +152,10 @@ function score_query(cl, message, from, room_to) {
         console.log(err);
       }
       if(objects.length === 0) {
-        cl.send(new xmpp.Element('message', { to: room_to, type: 'groupchat' }).
-          c('body').t('[woot: ' + name + ' not found.]')
-        );
+        send_message('[woot: ' + name + ' not found.]', cl, from, room_to);
       }
       else objects.forEach(function(obj) {
-        cl.send(new xmpp.Element('message', { to: room_to, type: 'groupchat' }).
-          c('body').t('[woot: score for ' + obj.name + ' is: ' + obj.score + '.]')
-        );
+        send_message('[woot: score for ' + obj.name + ' is: ' + obj.score + '.]', cl, from, room_to);
       });
     });
   }
