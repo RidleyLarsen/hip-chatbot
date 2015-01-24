@@ -16,6 +16,7 @@ var score = require('./score_tracker.js');
 var weather = require('./weather.js');
 var toilet = require('./toilet.js');
 var remind = require('./remind.js');
+var anonymessage = require('./anonymessage.js');
 
 // Config (get details from https://www.hipchat.com/account/xmpp)
 var jid = local_settings.jid;
@@ -36,6 +37,7 @@ function handle_group_message(cl, message, from, room_to) {
   weather.handle_group_message(cl, message, from, room_to);
   toilet.handle_group_message(cl, message, from, room_to);
   remind.handle_group_message(cl, message, from, room_to);
+  anonymessage.handle_group_message(cl, message, from, room_to);
 }
 
 
