@@ -8,7 +8,6 @@ message_types = {
 };
 
 function send_message(text, cl, from, to) { // add 'cl' param
-    var type;
     if (from.indexOf("chat.hipchat.com") > 0) {
       type = 'chat';
       to = from;
@@ -16,6 +15,7 @@ function send_message(text, cl, from, to) { // add 'cl' param
     else if (from.indexOf('conf.hipchat.com') > 0) {
       type = 'groupchat';
     }
+    console.log("sending message", text, cl, from, to);
     cl.send(new xmpp.Element('message', { to: to, type: type }).
       c('body').t(text)
     );
@@ -24,11 +24,13 @@ function send_message(text, cl, from, to) { // add 'cl' param
 function handle_message(cl, message, from, room_to) {
     var reg = /!\w+/i;
     if (reg.test(message) && message.search(reg) === 0) {
+        console.log('Message: ', message, ' Type: ', message.search(reg))
         var msg_type = message.match(reg)[0].substr(1);
         var room_type = 2 + msg_type.length;
         for (var i = local_settings.room_jids.length - 1; i >= 0; i--) {
             if (local_settings.room_jids[i].search(room_type)) {
                 room_to = local_settings.room_jids[i];
+                console.log('found a room_to: ', room_to)
                 break;
             }
         }
