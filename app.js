@@ -15,6 +15,7 @@ var message_functions = [];
 var score = require('./score_tracker.js');
 var weather = require('./weather.js');
 var toilet = require('./toilet.js');
+var remind = require('./remind.js');
 
 // Config (get details from https://www.hipchat.com/account/xmpp)
 var jid = local_settings.jid;
@@ -32,9 +33,9 @@ util.inspect(cl);
 // Functions
 
 function handle_group_message(cl, message, from, room_to) {
-  score.handle_group_message(cl, message, from, room_to);
   weather.handle_group_message(cl, message, from, room_to);
   toilet.handle_group_message(cl, message, from, room_to);
+  remind.handle_group_message(cl, message, from, room_to);
 }
 
 
@@ -47,6 +48,7 @@ function handle_group_message(cl, message, from, room_to) {
 // Once connected, set available presence and join room
 cl.on('online', function() {
   util.log("We're online!");
+
 
   // set ourselves as online
   cl.send(new xmpp.Element('presence', { type: 'available' }).
