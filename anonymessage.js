@@ -22,7 +22,7 @@ function handle_message(cl, message, from, room_to) {
         console.log('Message: ', message, ' Type: ', msg_type)
         var room_type = 2 + msg_type.length;
         for (var i = local_settings.room_jids.length - 1; i >= 0; i--) {
-            if (local_settings.room_jids[i].search(room_type)) {
+            if (local_settings.room_jids[i].search(room_type) > -1) {
                 room_to = local_settings.room_jids[i];
                 console.log('found a room_to: ', room_to)
                 break;
