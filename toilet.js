@@ -22,7 +22,7 @@ function toilet_query(cl, message, from, room_to) {
 
         var request = require("request");
 
-        var url = "http://tp.velocitywebworks.com/status";
+        var url = "http://192.168.10.47/status";
 
         request({
             url: url,
@@ -34,7 +34,7 @@ function toilet_query(cl, message, from, room_to) {
                     false: "(successful)", // Unicode: "Check mark" String.fromCharCode(0x2713),
                     true: "(failed)" // Unicode: "No Entry" String.fromCharCode(0xD83D,0xDEAB),
                 };
-                send_message('Mens: ' + chars[body.mens_occupied] + ', Womens: ' + chars[body.womens_occupied] + ' -- This REAL TIME restroom update brought to you by Squatty Potty: "I pooped today!"', cl, from, room_to);
+                send_message('Mens: ' + chars[body.mens_occupied] + ', Womens: ' + chars[body.womens_occupied], cl, from, room_to);
             }
             else {
                 util.log(error);
