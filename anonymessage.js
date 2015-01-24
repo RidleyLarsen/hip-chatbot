@@ -1,5 +1,6 @@
 var util = require('util');
 var xmpp = require('node-xmpp');
+var local_settings = require('./local_settings.json');
 
 message_types = {
     'break': 'Someone thinks this chat belongs in the break room.',
@@ -8,15 +9,8 @@ message_types = {
 };
 
 function send_message(text, cl, from, to) { // add 'cl' param
-    if (from.indexOf("chat.hipchat.com") > 0) {
-      type = 'chat';
-      to = from;
-    }
-    else if (from.indexOf('conf.hipchat.com') > 0) {
-      type = 'groupchat';
-    }
     console.log("sending message", text, cl, from, to);
-    cl.send(new xmpp.Element('message', { to: to, type: type }).
+    cl.send(new xmpp.Element('message', { to: to, type: "groupchat" }).
       c('body').t(text)
     );
 }
@@ -24,8 +18,8 @@ function send_message(text, cl, from, to) { // add 'cl' param
 function handle_message(cl, message, from, room_to) {
     var reg = /!\w+/i;
     if (reg.test(message) && message.search(reg) === 0) {
-        console.log('Message: ', message, ' Type: ', message.search(reg))
         var msg_type = message.match(reg)[0].substr(1);
+        console.log('Message: ', message, ' Type: ', msg_type)
         var room_type = 2 + msg_type.length;
         for (var i = local_settings.room_jids.length - 1; i >= 0; i--) {
             if (local_settings.room_jids[i].search(room_type)) {
